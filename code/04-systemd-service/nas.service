@@ -1,0 +1,15 @@
+[Unit]
+Description=NAS Script
+DefaultDependencies=no
+After=local-fs.target time-sync.target
+# # Use the those instead if you wish to wait for the network
+# After=network-online.target
+# Wants=network-online.target
+
+[Service]
+Type=idle
+# Check correct path
+ExecStart=/usr/bin/python3 /<<<PATH>>>/nas.py
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,31 @@
+// gpios = <x y z>
+// x: "pin group", for lack of a better term.
+// y: pin number (decimal).
+// z: active when, 0 = low, 1 = high, try what works.
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	// Value based on CPU
+	compatible = "brcm,bcm2708";
+
+	fragment@0 {
+	    target-path = "/";
+	    __overlay__ {
+	        nas-lcd {
+	        	// Driver
+	            compatible = "hit,hd44780";
+	            data-gpios = <&gpio 17 0>,
+	                         <&gpio 4 0>,
+	                         <&gpio 3 0>,
+	                         <&gpio 2 0>;
+	            enable-gpios  = <&gpio 27 0>;
+	            rs-gpios      = <&gpio 22 0>;
+
+	            display-width-chars = <16>;
+	            display-height-chars = <2>;
+	        };
+	    };
+	};
+};

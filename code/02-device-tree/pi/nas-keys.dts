@@ -1,0 +1,81 @@
+// gpios = <x y z>
+// x: "pin group", for lack of a better term.
+// y: pin number (decimal).
+// z: active when, 0 = low, 1 = high, try what works.
+
+/dts-v1/;
+/plugin/;
+
+/ {
+	// Value based on CPU
+	compatible = "brcm,bcm2708";
+
+	fragment@0 {
+		target = <&gpio>;
+		__overlay__ {
+			// This node does not seem to like hyphens in its name.
+			// Underscores are okay.
+			keypad_pins: keypad_pins {
+				// GPIO number (decimal). Seperate with spaces.
+				brcm,pins = <19 6 9 0 11>;
+				// If one value, applies to all pins.
+				// Alternatively, have a one-to-one match
+				// by following the same <a b c d e> pattern.
+				// 0 = input, 1 = output
+				brcm,function = <0>;
+				// Same as above.
+				// 0 = none, 1 = pull down, 2 = pull up
+				brcm,pull = <2>;
+			};
+		};
+	};
+
+	fragment@1 {
+		target-path = "/";
+		__overlay__ {
+			nas-keys {
+				compatible = "gpio-keys";
+
+				// autorepeat;
+
+				// Refers (by name) to the previously defined pin controller.
+				pinctrl-names = "default";
+				pinctrl-0 = <&keypad_pins>;
+
+				status = "okay";
+
+				esc-button {
+					label = "esc";
+					// Key code (decimal)
+					// List: https://github.com/torvalds/linux/blob/v4.12/include/uapi/linux/input-event-codes.h
+					linux,code = <1>;
+					gpios = <&gpio 9 1>;
+				};
+
+				ent-button {
+					label = "ent";
+					linux,code = <28>;
+					gpios = <&gpio 0 1>;
+				};
+
+				up-button {
+					label = "up";
+					linux,code = <103>;
+					gpios = <&gpio 6 1>;
+				};
+
+				down-button {
+					label = "down";
+					linux,code = <108>;
+					gpios = <&gpio 19 1>;
+				};
+
+				capslock-button {
+					label = "capslock";
+					linux,code = <58>;
+					gpios = <&gpio 11 0>;
+				};
+			};
+		};
+	};
+};

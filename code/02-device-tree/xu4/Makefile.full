@@ -1,0 +1,26 @@
+all:
+	# 1. Decompile
+	dtc -O dts -o exynos5422-odroidxu4.dts.old /boot/dtb/exynos5422-odroidxu4.dtb
+
+	# 2. Add nodes
+	## Remove last line
+	head -n -1 exynos5422-odroidxu4.dts.old > temp;
+	mv temp exynos5422-odroidxu4.dts
+	## Append content
+	echo "" >> exynos5422-odroidxu4.dts
+	cat nas-nodes.txt >> exynos5422-odroidxu4.dts
+	## Wrap up
+	echo "" >> exynos5422-odroidxu4.dts
+	echo "};" >> exynos5422-odroidxu4.dts
+
+	# 3. Compile
+	dtc -O dtb -o exynos5422-odroidxu4.dtb exynos5422-odroidxu4.dts
+
+	# 4. Disable conflicting nodes
+	fdtput exynos5422-odroidxu4.dtb spi1/spidev@0 status disabled
+
+	# 5. Copy
+	cp exynos5422-odroidxu4.dtb /boot/dtb
+
+	# 6. Reboot
+	# shutdown -r now

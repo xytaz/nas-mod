@@ -1,0 +1,31 @@
+// gpios = <x y z>
+// x: "pin group", for lack of a better term.
+// y: pin number (decimal).
+// z: active when, 0 = low, 1 = high, try what works.
+
+/dts-v1/;
+/plugin/;
+
+/ {	
+	// Value based on CPU
+	compatible = "brcm,bcm2708";
+
+	fragment@0 {
+		target = <&leds>;
+		__overlay__ {
+			// Green LED
+			// "trigger" has other values, such as "heartbeat".
+			nas-led1 {
+				label = "nas-led1";
+				gpios = <&gpio 5 1>;
+				linux,default-trigger = "none";
+			};
+			// Red LED
+			nas-led2 {
+				label = "nas-led2";
+				gpios = <&gpio 13 1>;
+				linux,default-trigger = "none";
+			};
+		};
+	};
+};

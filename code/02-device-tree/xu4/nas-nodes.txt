@@ -1,0 +1,100 @@
+	nas-keys-controller {
+		// GPIO's (groupName-pinNumberInGroup).
+		// Seperate with "\0".
+		samsung,pins = "gpx3-1\0gpx2-1\0gpx2-6\0gpx1-6\0gpx1-2";
+		// If one value, applies to all pins.
+		// Alternatively, have a one-to-one match
+		// by following the same <a b c d e> pattern.
+		// (hex) 0 = input, 1 = output
+		samsung,pin-function = < 0x00 >;
+		// Pull-up/down.
+		// (hex) 0, 1, 2 not standard. Look up or see how it is used
+		// in the base device tree.
+		// In this case, 3 is pull-up.
+		samsung,pin-pud = < 0x03 >;
+
+		samsung,pin-drv = < 0x00 >;
+		// Custom id by you.
+		// Can be anything as long as it is not used by anything else.
+		phandle = < 0xf0 >;
+	};
+
+	// gpios = <x y z>
+	// Example: <0x53 0x01 0x01> for gpx3-1
+	// x: _phandle_ of "pin group", for lack of a better term.
+	//    Example: Look up "gpx3" in the base device tree.
+	// y: pin number in group (hex).
+	//    Example: In "gpx3-1", the "1" is the value.
+	// z: active when, 0 = low, 1 = high, try what works. (hex)
+
+	nas-lcd {
+		// Driver
+        compatible = "hit,hd44780";
+
+        data-gpios 	  = <0x47 0x06 0x00>,
+                     	<0x47 0x07 0x00>,
+                     	<0xb0 0x03 0x00>,
+                     	<0xb0 0x02 0x00>;
+        enable-gpios  = <0x47 0x05 0x00>;
+        rs-gpios      = <0x4a 0x05 0x00>;
+
+        display-width-chars = <16>;
+        display-height-chars = <2>;
+	 };
+
+	 nas-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		// Refers (by phandle) to the previously defined pin controller.
+		pinctrl-0 = <0xf0>;
+
+		down-button {
+			label = "down";
+			// Key code (hex)
+			// List: https://github.com/torvalds/linux/blob/v4.12/include/uapi/linux/input-event-codes.h
+			linux,code = <0x6c>;
+			gpios = <0x53 0x01 0x01>;
+		};	
+
+		up-button {
+			label = "up";
+			linux,code = <0x67>;
+			gpios = <0x48 0x01 0x01>;
+		};	
+
+		ent-button {
+			label = "ent";
+			linux,code = <0x1c>;
+			gpios = <0x48 0x06 0x01>;
+		};	
+
+		capslock-button {
+			label = "capslock";
+			linux,code = <0x3a>;
+			gpios = <0x4a 0x06 0x00>;
+		};	
+
+		esc-button {
+			label = "esc";
+			linux,code = <0x01>;
+			gpios = <0x4a 0x02 0x01>;
+		};	
+	};
+
+	nas-leds {
+		compatible = "gpio-leds";
+
+		// Green LED
+		// "trigger" has other values, such as "heartbeat".
+		nas-led1 {
+			label = "nas-led1";
+			gpios = <0x48 0x05 1>;
+			linux,default-trigger = "none";
+		};
+		// Red LED
+		nas-led2 {
+			label = "nas-led2";
+			gpios = <0x4a 0x07 0>;
+			linux,default-trigger = "none";
+		};
+	};
